@@ -1,0 +1,1002 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MealsSense — Hostel Meals RSVP</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    /* ===============================
+       GLOBAL VARIABLES & BASE
+    =============================== */
+    :root{
+      --bg:#0f1724;
+      --card: rgba(255,255,255,0.06);
+      --glass: rgba(255,255,255,0.06);
+      --accent:#ffb300;
+      --muted: rgba(255,255,255,0.6);
+      --success: #16a34a; /* green */
+      --danger: #ef4444;
+      --glass-border: rgba(255,255,255,0.08);
+      --max-width: 1250px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(255,179,77,0.06), transparent 6%),
+                  radial-gradient(900px 400px at 90% 90%, rgba(255,90,95,0.03), transparent 6%),
+                  var(--bg);
+      color:#e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+      padding:32px;
+    }
+
+    .cook-mode .main{
+      background: linear-gradient(180deg, rgba(18,24,33,0.95), rgba(14,18,24,0.95));
+      border-color: rgba(255,140,85,0.06);
+    }
+    .cook-mode .card{
+      border-color: rgba(255,140,85,0.06);
+      background: rgba(10,14,18,0.45);
+    }
+    .cook-mode .logo{ background: linear-gradient(135deg,#ff7a7a,#ffb300); }
+    .cook-mode .cta{ background: linear-gradient(90deg,#ff7a7a,#ffb300); color:#082032; }
+
+    /* ============= Updated: App container to use 90% viewport ============= */
+    .app{
+      width: 200vw;                     /* cover 90% of the browser width */
+      max: width 1200px;
+      display:grid;
+      grid-template-columns: 350px 1fr; /* slightly wider sidebar */
+      gap:24px;
+      align-items:stretch;
+      min-height:90vh;                 /* fill 90% browser height */
+      margin:0 auto;
+    }
+
+    /* ============= Updated: Sidebar width bumped to prevent wrapping ============= */
+    .sidebar{
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      border-radius:16px;
+      padding:20px;
+      box-shadow:0 6px 30px rgba(2,6,23,0.65);
+      border:1px solid var(--glass-border);
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-start;
+      height:100%;
+      width: 350px;          /* ensure sidebar uses the new width */
+      min-width: 350px;
+    }
+
+    .brand{
+      display:flex;gap:12px;align-items:center;margin-bottom:18px;
+    }
+    .logo{
+      width:48px;height:48px;border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),#ff7a7a);
+      display:flex;align-items:center;justify-content:center;
+      font-weight:900;color:#082032;font-size:18px;
+      box-shadow:0 6px 20px rgba(255,179,77,0.12);
+    }
+    h1.title{font-size:18px;margin:0 0 2px;letter-spacing:0.2px;}
+    p.subtitle{margin:0;font-size:12px;color:var(--muted);}
+
+    .hpbox{margin-left:auto;width:48px;height:48px;border-radius:10px;overflow:hidden;
+           border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .hpbox img{width:100%;height:100%;object-fit:contain;display:block;background:#fff;border-radius:6px;}
+    .hpbox .placeholder{color:var(--muted);font-weight:700}
+
+    /* ============= Updated: Nav must be vertical and buttons full-width ============= */
+    .nav{
+      margin-top:18px;
+      display:flex;
+      flex-direction:column; /* vertical stack */
+      gap:8px;
+      align-items:stretch;
+      width:100%;
+      box-sizing:border-box;
+    }
+    .nav .btn{
+      display:flex;               /* allow icon + label layout */
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:10px;
+      background:transparent;
+      color:var(--muted);
+      border:1px solid transparent;
+      cursor:pointer;
+      font-weight:600;
+      transition:all .18s;
+      text-align:left;
+      font-size:14px;
+      width:100%;                /* important: full width so each is a row */
+      justify-content:flex-start;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      box-sizing:border-box;
+    }
+    .nav .btn:hover{transform:translateY(-2px);color:#fff}
+    .nav .btn.active{background:linear-gradient(90deg,rgba(255,179,77,0.12),rgba(255,125,125,0.06));
+                color:#fff;border:1px solid rgba(255,255,255,0.04);}
+
+    /* keep .btn generic in case other selectors use it (no change) */
+    .btn{
+      /* fallback styles preserved for any .btn outside .nav */
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:10px;
+      background:transparent;
+      color:var(--muted);
+      border:1px solid transparent;
+      cursor:pointer;
+      font-weight:600;
+      transition:all .18s;
+      text-align:left;
+      font-size:14px;
+    }
+
+    .card{
+      margin-top:14px;padding:12px;border-radius:12px;background:var(--card);
+      border:1px solid var(--glass-border);
+    }
+
+    /* slight padding tweak to balance with the wider sidebar */
+    .main{
+      min-height:100%;
+      border-radius:16px;
+      padding:22px; /* tiny increase for better balance with wider sidebar */
+      background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
+      border:1px solid var(--glass-border);
+      box-shadow:0 8px 40px rgba(5,8,23,0.65);
+      display:flex;
+      flex-direction:column;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+    }
+    .greet{font-size:18px;font-weight:700;}
+    .userbubble{display:flex;align-items:center;gap:10px;}
+    .avatar{
+      width:44px;height:44px;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:700;background:linear-gradient(135deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02));
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    .profile-box{margin-top:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid var(--glass-border);}
+    .profile-row{display:flex;gap:12px;align-items:center;margin-bottom:8px;}
+    .profile-label{color:var(--muted);min-width:80px;font-weight:600}
+    .profile-value{font-weight:700}
+
+    .dates-row{display:flex;gap:8px;margin-top:14px;}
+    .day-card{
+      min-width:110px;padding:10px;border-radius:12px;text-align:center;
+      cursor:pointer;user-select:none;background:rgba(255,255,255,0.02);
+      border:1px solid transparent;
+    }
+    .day-card.selected{
+      background:linear-gradient(90deg,rgba(255,179,77,0.08),rgba(255,125,125,0.03));
+      border:1px solid rgba(255,255,255,0.04);color:#fff;
+    }
+    .date-small{font-size:12px;color:var(--muted);}
+
+    .meals{display:flex;gap:12px;margin-top:14px;}
+    .meal-toggle{
+      flex:1;padding:14px;border-radius:12px;text-align:center;cursor:pointer;user-select:none;
+      border:1px dashed rgba(255,255,255,0.04);background:rgba(255,255,255,0.01);
+      transition:transform .12s,box-shadow .12s;
+    }
+    .meal-toggle:hover{transform:translateY(-4px);}
+    .meal-toggle.on{
+      background:linear-gradient(180deg,rgba(34,197,94,0.12),rgba(34,197,94,0.06));
+      border:3px solid var(--success);box-shadow:0 8px 25px rgba(34,197,94,0.05);
+    }
+
+    .muted{color:var(--muted);}
+
+    table{width:100%;border-collapse:collapse;font-size:14px;}
+    th,td{padding:8px 10px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03);}
+    th{color:var(--muted);font-weight:600;font-size:13px;}
+    .row{display:flex;gap:12px;align-items:center;}
+    .spacer{flex:1;}
+    .small{font-size:13px;}
+    .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);
+          font-weight:700;font-size:13px;}
+    .cta{
+      padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#ff7a7a);
+      color:#082032;border:none;font-weight:800;cursor:pointer;
+    }
+    .ghost{
+      background:transparent;border:1px solid rgba(255,255,255,0.04);
+      padding:8px 10px;border-radius:10px;color:var(--muted);cursor:pointer;
+    }
+    .ghost:hover{color:#fff;border-color:rgba(255,255,255,0.1);}
+    .alert{
+      padding:10px;border-radius:10px;background:rgba(239,68,68,0.08);
+      border:1px solid rgba(239,68,68,0.12);color:#ffdddd;margin-top:10px;
+    }
+    .toast {
+      position:fixed; left:50%; transform:translateX(-50%); bottom:28px;
+      background: rgba(15,23,42,0.95); color:#eaffea; padding:12px 18px; border-radius:10px;
+      box-shadow: 0 6px 30px rgba(0,0,0,0.6); display:none; z-index:9999; font-weight:700;
+    }
+    .toast.show { display:block; animation:toastIn .26s ease; }
+    @keyframes toastIn { from { opacity:0; transform: translateX(-50%) translateY(8px); } to { opacity:1; transform: translateX(-50%) translateY(0);} }
+
+    /* slider styles */
+    /* slider styles */
+.slider-container {
+  position: relative;
+  width: 1390px;
+  height: 650px; /* increased from 300px → 420px */
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.slider {
+  display: flex;
+  transition: transform 0.6s ease;
+  height: 100%;
+}
+
+.slide {
+  min-width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 20px;
+}
+
+.slide-content {
+  background: rgba(0,0,0,0.55);
+  padding: 14px 18px;
+  border-radius: 8px;
+  color: white;
+  max-width: 60%;
+}
+
+.slider-nav {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.slider-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  cursor: pointer;
+}
+
+.slider-dot.active { background: var(--accent); }
+
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.4);
+  color: white;
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: background 0.2s ease;
+}
+
+.slider-arrow:hover { background: rgba(0,0,0,0.6); }
+.slider-arrow.prev { left: 16px; }
+.slider-arrow.next { right: 16px; }
+
+
+    .notification-item { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .notification-item:last-child { border-bottom: none; }
+    .notification-title { font-weight: 700; margin-bottom: 4px; }
+    .notification-time { font-size: 12px; color: var(--muted); }
+    .compose-area textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; color: white; margin-bottom: 8px; resize: vertical; }
+
+    .food-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .food-item:last-child { border-bottom: none; }
+    .food-day { font-weight: 700; min-width: 100px; }
+    .food-meals { flex: 1; }
+    .food-actions { display: flex; gap: 8px; }
+
+    .sidebar .card, .main .card{overflow:auto;}
+    .main{box-sizing:border-box;overflow:auto;}
+
+    @media (max-width:980px){
+      body{align-items:flex-start;padding:16px;}
+      .app{grid-template-columns:1fr;gap:16px;min-height:80vh;width:100%;}
+      .sidebar{order:2;width:auto;min-width:0;}
+      .main{order:1;}
+    }
+  </style>
+
+</head>
+<body>
+  <div class="app" id="appRoot">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo">MS</div>
+        <div style="flex:1">
+          <h1 class="title">MealsSense</h1>
+          <p class="subtitle">Organise your meal · Save food</p>
+        </div>
+
+        <div id="hpbox" class="hpbox" title="Click to upload MealsSense logo">
+          <span class="placeholder">MS</span>
+          <img id="hpLogo" src="" alt="MealsSense" style="display:none">
+        </div>
+        <input type="file" id="hpUploader" accept="image/*" style="display:none" multiple>
+      </div>
+
+      <div id="authArea" class="card"></div>
+
+      <div class="nav card" id="navButtons" style="display:none">
+        <button class="btn active" data-view="home" id="nav_home">Home</button>
+        <button class="btn" data-view="student" id="nav_student">My Meals</button>
+        <button class="btn" data-view="history" id="nav_history">History</button>
+        <button class="btn" data-view="notifications" id="nav_notifications">Notifications</button>
+        <button class="btn" data-view="foodtable" id="nav_foodtable">Food Table</button>
+        <button class="btn" data-view="cook" id="nav_cook" style="display:none">Cook Dashboard</button>
+        <div style="margin-top:8px" class="muted small">Signed in as <span id="signedStudent">—</span></div>
+        <div style="margin-top:10px; display:flex; gap:8px">
+          <button id="logoutBtn" class="ghost">Logout</button>
+        </div>
+      </div>
+
+      <div id="quickTips" class="card" style="margin-top:12px">
+        <div class="small muted">Quick tips</div>
+        <ul style="padding-left:18px; margin-top:8px; line-height:1.5; color:var(--muted)">
+          <li>Default date = tomorrow</li>
+          <li>Choose up to 3 days ahead</li>
+          <li>Edit your choices anytime</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main" id="main">
+      <div class="topbar">
+        <div>
+          <div class="greet" id="greet">Welcome — please sign in</div>
+          <div class="muted small" id="rolePill">Not signed in</div>
+        </div>
+        <div class="userbubble">
+          <div class="pill" id="todayLabel"></div>
+          <div class="avatar" id="avatarInitial">H</div>
+        </div>
+      </div>
+
+      <div id="viewArea" style="margin-top:18px">
+        <div id="landing" class="card">
+          <h3 style="margin:0 0 8px">Get started</h3>
+          <p class="muted small">Sign up or login with your student id & password. Cooks must be created by admin.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- Firebase SDK (v9 modular) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import {
+      getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+      signOut, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import {
+      getFirestore, doc, setDoc, getDoc, getDocs, collection, query, where, serverTimestamp,
+      onSnapshot, orderBy, addDoc, updateDoc, deleteDoc
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD1k4TcSOTDiZ4h97sZJS2p5Fh0FJ9mEK8",
+      authDomain: "hostel-food-manage.firebaseapp.com",
+      projectId: "hostel-food-manage",
+      storageBucket: "hostel-food-manage.firebasestorage.app",
+      messagingSenderId: "417428084883",
+      appId: "1:417428084883:web:62a142d48f5cf6489ed566"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // ---------- Helpers ----------
+    const $ = (s) => document.querySelector(s);
+    const el = (s) => document.createElement(s);
+    function formatDate(date){ const y = date.getFullYear(); const m = String(date.getMonth()+1).padStart(2,'0'); const d = String(date.getDate()).padStart(2,'0'); return `${y}-${m}-${d}`; }
+    function niceDateLabel(date){ const today = new Date(); const diff = Math.round((date - new Date(today.getFullYear(),today.getMonth(),today.getDate()))/86400000); if(diff === 1) return "Tomorrow"; if(diff === 0) return "Today"; const opt = { weekday: 'short', month:'short', day:'numeric' }; return date.toLocaleDateString(undefined,opt); }
+
+    // ---------- UI refs ----------
+    const authArea = $('#authArea'); const navButtons = $('#navButtons'); const viewArea = $('#viewArea');
+    const greet = $('#greet'); const rolePill = $('#rolePill'); const signedStudent = $('#signedStudent');
+    const avatarInitial = $('#avatarInitial'); const navCookBtn = $('#nav_cook'); const quickTips = $('#quickTips');
+    const toastEl = $('#toast'); const appRoot = $('#appRoot');
+
+    const ALLOWED_COOK_IDS = ['COOK01','COOK02','COOK03'];
+
+    // ---------- Slider images initialization (added 5 default SVG images) ----------
+    // If user has saved slider_images in localStorage, we use that; otherwise we seed with 5 SVG placeholders.
+    function buildSVGData(text, bg, fg){
+      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='500'><rect width='100%' height='100%' fill='${bg}'/><g font-family='Inter, Arial' font-weight='700'><text x='50%' y='46%' text-anchor='middle' dominant-baseline='middle' font-size='40' fill='${fg}'>${text}</text><text x='50%' y='62%' text-anchor='middle' dominant-baseline='middle' font-size='20' fill='${fg}' opacity='0.9'>MealsSense — Hostel Meals RSVP</text></g></svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    const defaultSliderImages = [
+      { url: buildSVGData('Fresh Breakfasts', '#072033', '#ffb300'), title: 'Breakfast', description: 'Start your day right' },
+      { url: buildSVGData('Hearty Lunches', '#0b2b21', '#ffb300'), title: 'Lunch', description: 'Energy for your studies' },
+      { url: buildSVGData('Comforting Dinners', '#2a1437', '#ffb300'), title: 'Dinner', description: 'Relax and enjoy' },
+      { url: buildSVGData('Tasty Snacks', '#17324b', '#ffb300'), title: 'Snacks', description: 'Quick & healthy' },
+      { url: buildSVGData('Save Food · Save Money', '#051927', '#ffb300'), title: 'Plan Ahead', description: 'Reduce waste with planning' }
+    ];
+
+    // load from localStorage if present, otherwise seed defaults
+    // Easy preloaded local images — will always load from the given folder
+let sliderImages = [
+  { url: 'images/11.jpg', title: 'MealsSense', description: 'Plan your daily meals smartly' },
+  { url: 'images/222.png', title: 'MealsSense', description: 'Nutritious and delicious hostel food' },
+  { url: 'images/333.png', title: 'MealsSense', description: 'Easy meal selection system' },
+  { url: 'images/4.png', title: 'MealsSense', description: 'Avoid food waste — choose wisely' },
+  { url: 'images/5.png', title: 'MealsSense', description: 'Simplifying hostel dining for students' }
+];
+
+
+    if(!sliderImages || !Array.isArray(sliderImages) || sliderImages.length === 0){
+      sliderImages = defaultSliderImages.slice();
+      // persist so next load keeps them
+      localStorage.setItem('slider_images', JSON.stringify(sliderImages));
+    }
+    let currentSlide = 0;
+
+    // ---------- Logo upload handling (UNIFIED) ----------
+    const hpbox = $('#hpbox'); const hpUploader = $('#hpUploader'); const hpLogo = $('#hpLogo');
+    const storedLogo = localStorage.getItem('mealsense_logo_data');
+    if(storedLogo){ hpLogo.src = storedLogo; hpLogo.style.display = 'block'; hpbox.querySelector('.placeholder')?.remove(); }
+
+    hpbox.addEventListener('click', ()=> hpUploader.click());
+
+    // Unified uploader: sets sidebar logo + adds to slider_images
+    hpUploader.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files || []);
+      if (files.length === 0) return;
+
+      const promises = files.map(f => new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload = ev => res(ev.target.result);
+        r.onerror = rej;
+        r.readAsDataURL(f);
+      }));
+
+      Promise.all(promises).then(dataUrls => {
+        // set first as sidebar logo
+        const first = dataUrls[0];
+        localStorage.setItem('mealsense_logo_data', first);
+        hpLogo.src = first; hpLogo.style.display = 'block';
+        const ph = hpbox.querySelector('.placeholder'); if (ph) ph.remove();
+
+        // Save slider images under a single key 'slider_images'
+        const key = 'slider_images';
+        const arr = JSON.parse(localStorage.getItem(key) || '[]');
+        const newArr = arr.concat(dataUrls.map(d => ({ url: d, title: 'MealsSense', description: 'Hostel meal management' })));
+        localStorage.setItem(key, JSON.stringify(newArr));
+        sliderImages = newArr; // update runtime array
+        showToast('Uploaded image(s) — added to slider');
+        if (currentView === 'home') renderHomeView();
+      }).catch(err => {
+        console.error(err);
+        showToast('Upload failed');
+      });
+    });
+
+    // ---------- Toast ----------
+    function showToast(msg, timeout=3000){ toastEl.textContent = msg; toastEl.classList.add('show'); setTimeout(()=> toastEl.classList.remove('show'), timeout); }
+
+    // ---------- Sample data initializer ----------
+    async function initializeSampleData() {
+      try {
+        const foodSnapshot = await getDocs(collection(db, 'foodtable'));
+        if (foodSnapshot.empty) {
+          const days = [
+            { day: 'Monday', breakfast: 'Poha, Tea', lunch: 'Rice, Dal, Sabzi, Salad', dinner: 'Roti, Paneer, Rice', dayOrder:0 },
+            { day: 'Tuesday', breakfast: 'Sandwich, Milk', lunch: 'Rice, Rajma, Sabzi, Salad', dinner: 'Roti, Chole, Rice', dayOrder:1 },
+            { day: 'Wednesday', breakfast: 'Idli, Sambar', lunch: 'Rice, Sambar, Sabzi, Salad', dinner: 'Roti, Mix Veg, Rice', dayOrder:2 },
+            { day: 'Thursday', breakfast: 'Paratha, Curd', lunch: 'Rice, Dal Fry, Sabzi, Salad', dinner: 'Roti, Kadhai Paneer, Rice', dayOrder:3 },
+            { day: 'Friday', breakfast: 'Cornflakes, Milk', lunch: 'Rice, Chole, Sabzi, Salad', dinner: 'Roti, Dal Makhani, Rice', dayOrder:4 },
+            { day: 'Saturday', breakfast: 'Utappam, Chutney', lunch: 'Biryani, Raita, Salad', dinner: 'Pav Bhaji, Buttermilk', dayOrder:5 },
+            { day: 'Sunday', breakfast: 'Aloo Paratha, Pickle', lunch: 'Thali (Roti, Rice, 3 Sabzi, Dal, Salad)', dinner: 'Noodles, Manchurian', dayOrder:6 }
+          ];
+          for (let i = 0; i < days.length; i++) {
+            await addDoc(collection(db, 'foodtable'), days[i]);
+          }
+        }
+        const notificationsSnapshot = await getDocs(collection(db, 'notifications'));
+        if (notificationsSnapshot.empty) {
+          await addDoc(collection(db, 'notifications'), { message: 'Welcome to MealsSense! Please make your meal selections for tomorrow.', sender: 'System', timestamp: serverTimestamp(), readBy: [] });
+        }
+      } catch (err) {
+        console.warn('initializeSampleData error', err);
+      }
+    }
+
+    // ---------- AUTH UI ----------
+    function renderAuthForms(){
+      authArea.innerHTML = '';
+      const container = el('div');
+
+      const toggleRow = el('div'); toggleRow.style.display = 'flex'; toggleRow.style.gap='8px';
+      const loginBtn = el('button'); loginBtn.className='btn active'; loginBtn.textContent='Login';
+      const regBtn = el('button'); regBtn.className='btn'; regBtn.textContent='Register';
+      toggleRow.append(loginBtn, regBtn);
+      container.appendChild(toggleRow);
+
+      const formWrap = el('div'); formWrap.style.marginTop='12px';
+
+      const loginForm = el('div');
+      loginForm.innerHTML = `
+        <label class="small muted">Role</label>
+        <div style="display:flex; gap:8px; margin-top:8px">
+          <label style="display:flex; gap:6px; align-items:center"><input type="radio" name="login_role" value="student" checked> Student</label>
+          <label style="display:flex; gap:6px; align-items:center"><input type="radio" name="login_role" value="cook"> Cook</label>
+        </div>
+        <label class="small muted" style="margin-top:10px; display:block">Student ID</label>
+        <input id="login_sid" class="pill" style="width:100%; margin-top:8px; padding:10px; border-radius:8px; border:none;" placeholder="e.g., S123 or COOK01">
+        <label class="small muted" style="margin-top:8px; display:block">Password</label>
+        <input id="login_pwd" type="password" class="pill" style="width:100%; margin-top:8px; padding:10px; border-radius:8px; border:none;">
+        <div style="margin-top:10px; display:flex; gap:8px">
+          <button id="doLogin" class="cta">Login</button>
+        </div>
+        <div id="loginMsg" class="muted small" style="margin-top:8px"></div>
+      `;
+      formWrap.appendChild(loginForm);
+
+      const regForm = el('div'); regForm.style.display='none';
+      regForm.innerHTML = `
+        <label class="small muted" style="display:block">Student ID</label>
+        <input id="reg_sid" class="pill" style="width:100%; margin-top:8px; padding:10px; border-radius:8px; border:none;" placeholder="e.g., S123">
+        <label class="small muted" style="margin-top:8px; display:block">Full name</label>
+        <input id="reg_name" class="pill" style="width:100%; margin-top:8px; padding:10px; border-radius:8px; border:none;" placeholder="Your full name">
+        <label class="small muted" style="margin-top:8px; display:block">Gmail (required)</label>
+        <input id="reg_email" class="pill" style="width:100%; margin-top:8px; padding:10px; border-radius:8px; border:none;" placeholder="you@gmail.com">
+        <label class="small muted" style="margin-top:8px; display:block">Phone number (required)</label>
+        <input id="reg_phone" class="pill" style="width:100%; margin-top:8px; padding:10px; border-radius:8px; border:none;" placeholder="+91xxxxxxxxxx">
+        <label class="small muted" style="margin-top:8px; display:block">Password</label>
+        <input id="reg_pwd" type="password" class="pill" style="width:100%; margin-top:8px; padding:10px; border-radius:8px; border:none;">
+        <div style="margin-top:10px; display:flex; gap:8px">
+          <button id="doRegister" class="cta">Register</button>
+          <button id="backToLogin" class="ghost">Back</button>
+        </div>
+        <div id="regMsg" class="muted small" style="margin-top:8px"></div>
+      `;
+      formWrap.appendChild(regForm);
+
+      container.appendChild(formWrap);
+      authArea.appendChild(container);
+
+      loginBtn.addEventListener('click', ()=>{ loginBtn.classList.add('active'); regBtn.classList.remove('active'); loginForm.style.display='block'; regForm.style.display='none'; });
+      regBtn.addEventListener('click', ()=>{ regBtn.classList.add('active'); loginBtn.classList.remove('active'); regForm.style.display='block'; loginForm.style.display='none'; });
+
+      $('#doRegister').addEventListener('click', async ()=> {
+        const sid = $('#reg_sid').value.trim().toUpperCase();
+        const name = $('#reg_name').value.trim();
+        const email = $('#reg_email').value.trim();
+        const phone = $('#reg_phone').value.trim();
+        const pwd = $('#reg_pwd').value;
+        const msg = $('#regMsg'); msg.textContent = '';
+        if(!sid || !name || !email || !phone || pwd.length < 6){ msg.textContent = 'Fill all fields. Password min 6 chars.'; return; }
+        try{
+          const syntheticEmail = `${sid}@hostel.local`;
+          const cred = await createUserWithEmailAndPassword(auth, syntheticEmail, pwd);
+          const uid = cred.user.uid;
+          await setDoc(doc(db, 'students', uid), { studentId: sid, name, email, phone, role: 'student', createdAt: serverTimestamp() });
+          msg.textContent = 'Registered — logged in.';
+        }catch(err){
+          msg.textContent = 'Error: '+err.message;
+        }
+      });
+
+      $('#doLogin').addEventListener('click', async ()=> {
+        const sidRaw = $('#login_sid').value.trim();
+        const sid = sidRaw ? sidRaw.toUpperCase() : '';
+        const pwd = $('#login_pwd').value;
+        const chosenRole = document.querySelector('input[name="login_role"]:checked').value;
+        const msg = $('#loginMsg'); msg.textContent = '';
+        if(!sid || !pwd){ msg.textContent = 'Enter student id & password'; return; }
+
+        if(chosenRole === 'cook' && !ALLOWED_COOK_IDS.includes(sid)){ msg.textContent = `Cook login allowed only for: ${ALLOWED_COOK_IDS.join(', ')}`; return; }
+
+        try{
+          const email = `${sid}@hostel.local`;
+          const cred = await signInWithEmailAndPassword(auth, email, pwd);
+          const sd = await getDoc(doc(db, 'students', cred.user.uid));
+          const profile = sd.exists() ? sd.data() : null;
+
+          if(chosenRole === 'student' && profile && profile.role === 'cook'){ await signOut(auth); msg.textContent = 'Cannot login as Student with a Cook account. Choose Cook role.'; return; }
+          if(chosenRole === 'cook' && (!profile || profile.role !== 'cook')){ await signOut(auth); msg.textContent = 'This account is not authorized as Cook.'; return; }
+          msg.textContent = 'Logged in';
+        }catch(err){
+          msg.textContent = 'Login failed: '+err.message;
+        }
+      });
+
+      $('#backToLogin').addEventListener('click', ()=> loginBtn.click());
+    }
+
+    // ---------- App state ----------
+    let currentUser = null; let currentProfile = null; let currentView = 'home';
+    let pollInterval = 30000; let pollTimer = null; let notificationsUnsubscribe = null; let cookUnsubscribe = null; let foodScheduleUnsubscribe = null;
+
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      if(user){
+        const sd = await getDoc(doc(db, 'students', user.uid));
+        currentProfile = sd.exists() ? sd.data() : null;
+
+        $('#authArea').style.display='none'; navButtons.style.display='block';
+        signedStudent.textContent = currentProfile?.studentId || currentUser.email;
+        greet.textContent = `Hi, ${currentProfile?.name || currentProfile?.studentId || 'Student'}`;
+        rolePill.textContent = (currentProfile?.role || 'student').toUpperCase();
+        avatarInitial.textContent = (currentProfile?.name || 'User').slice(0,1).toUpperCase();
+
+        await initializeSampleData();
+
+        if(currentProfile?.role === 'cook' || currentProfile?.role === 'admin'){
+  document.documentElement.classList.add('cook-mode');
+  navCookBtn.style.display='inline-flex'; 
+  quickTips.style.display = 'none';
+
+  // Hide student-only navigation tabs
+  $('#nav_student').style.display='none';
+  $('#nav_history').style.display='none';
+  $('#nav_home').style.display='none'; // 👈 Added line to hide Home tab
+
+  showView('cook'); // Open Cook Dashboard directly
+}
+ else {
+          document.documentElement.classList.remove('cook-mode');
+          navCookBtn.style.display='none'; quickTips.style.display='block';
+          $('#nav_student').style.display='inline-flex'; $('#nav_history').style.display='inline-flex';
+          showView('home');
+        }
+
+        setupNotificationsListener();
+      } else {
+        if (notificationsUnsubscribe) { notificationsUnsubscribe(); notificationsUnsubscribe = null; }
+        if (cookUnsubscribe) { cookUnsubscribe(); cookUnsubscribe = null; }
+        if (foodScheduleUnsubscribe) { foodScheduleUnsubscribe(); foodScheduleUnsubscribe = null; }
+
+        document.documentElement.classList.remove('cook-mode');
+        currentProfile = null;
+        $('#authArea').style.display='block';
+        navButtons.style.display='none';
+        viewArea.innerHTML = `
+          <div style="display:grid;grid-template-columns:1fr 360px;gap:16px">
+            <div class="card">
+              <h3 style="margin:0 0 8px">Welcome to MealsSense</h3>
+              <p class="muted small">MealsSense helps students confirm meals a day ahead so food isn't wasted. Quick, simple and designed for students.</p>
+              <h4 style="margin-top:12px">How it works</h4>
+              <ul style="padding-left:18px; line-height:1.6; color:var(--muted)">
+                <li>Register with your Student ID, Gmail & phone (required).</li>
+                <li>Choose meals you want for the next day (and up to 2 days ahead).</li>
+                <li>Click <strong>Submit selection</strong> to save your schedule.</li>
+                <li>Your choices are private — only the cook sees aggregated counts, not individual details.</li>
+              </ul>
+              <h4 style="margin-top:12px">Student tips</h4>
+              <ul style="padding-left:18px; line-height:1.6; color:var(--muted)">
+                <li>Make changes any time before the cutoff (set by admin).</li>
+                <li>Keep your profile (Gmail & phone) updated for quick communication.</li>
+                <li>Use the History tab to review previous selections.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3 style="margin:0 0 8px">Student FAQ</h3>
+              <ul style="padding-left:18px; line-height:1.6; color:var(--muted)">
+                <li><strong>Q:</strong> Can I change my choice after submitting?<br><strong>A:</strong> Yes — until the cutoff time.</li>
+                <li><strong>Q:</strong> Who sees my selection?<br><strong>A:</strong> Only aggregated counts are visible to the cook; individual history is private to you.</li>
+                <li><strong>Q:</strong> Is the app mobile friendly?<br><strong>A:</strong> Yes — use it on your phone browser.</li>
+              </ul>
+            </div>
+          </div>
+        `;
+        greet.textContent = 'Welcome — please sign in';
+        rolePill.textContent = 'Not signed in';
+        signedStudent.textContent = '—';
+        avatarInitial.textContent = 'H';
+        if(pollTimer){ clearInterval(pollTimer); pollTimer = null; }
+      }
+    });
+
+    // Logout
+    $('#logoutBtn').addEventListener('click', async ()=>{ if (notificationsUnsubscribe) { notificationsUnsubscribe(); notificationsUnsubscribe = null; } await signOut(auth); });
+
+    // Nav
+    $('#nav_home').addEventListener('click', ()=>showView('home'));
+    $('#nav_student').addEventListener('click', ()=>showView('student'));
+    $('#nav_history').addEventListener('click', ()=>showView('history'));
+    $('#nav_notifications').addEventListener('click', ()=>showView('notifications'));
+    $('#nav_foodtable').addEventListener('click', ()=>showView('foodtable'));
+    $('#nav_cook').addEventListener('click', ()=>showView('cook'));
+
+    // Init auth form
+    renderAuthForms();
+
+    // Router
+    function showView(view){
+      currentView = view;
+      document.querySelectorAll('#navButtons .btn').forEach(b => b.classList.remove('active'));
+      const btn = document.querySelector(`#navButtons .btn[data-view="${view}"]`);
+      if(btn) btn.classList.add('active');
+
+      if(view === 'home') return renderHomeView();
+      if(view === 'student') return renderStudentView();
+      if(view === 'history') return renderHistoryView();
+      if(view === 'notifications') return renderNotificationsView();
+      if(view === 'foodtable') return renderFoodTableView();
+      if(view === 'cook') return renderCookView();
+    }
+
+    // Home view + slider
+    function renderSliderHTML() {
+      if (sliderImages.length === 0) {
+        return `<div class="slider-container"><div class="slide" style="background: rgba(255,255,255,0.05); display:flex;align-items:center;justify-content:center;"><div class="slide-content"><h3>No images yet</h3><p>Upload images using the logo uploader in sidebar</p></div></div></div>`;
+      }
+      let slides = '', dots = '';
+      sliderImages.forEach((img, idx) => {
+        slides += `<div class="slide" style="background-image:url(${img.url})"><div class="slide-content"><h3>${img.title||'MealsSense'}</h3><p>${img.description||'Delicious meals served daily'}</p></div></div>`;
+        dots += `<div class="slider-dot ${idx===currentSlide?'active':''}" data-index="${idx}"></div>`;
+      });
+      return `<div class="slider-container"><div class="slider" style="transform:translateX(-${currentSlide*100}%)">${slides}</div><button class="slider-arrow prev">❮</button><button class="slider-arrow next">❯</button><div class="slider-nav">${dots}</div></div>`;
+    }
+
+    function renderHomeView(){
+      viewArea.innerHTML = ''; const card = el('div'); card.className='card';
+      const heading = el('h3'); heading.textContent = 'Welcome to MealsSense'; heading.style.margin='0 0 16px'; card.appendChild(heading);
+      card.innerHTML += renderSliderHTML();
+      const welcomeContent = el('div');
+      welcomeContent.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;"><div><h4 style="margin:0 0 8px">Today's Special</h4><p class="muted small">Check the Food Table for today's menu and make your selections in My Meals.</p></div><div><h4 style="margin:0 0 8px">Quick Actions</h4><div style="display:flex;flex-direction:column;gap:8px"><button class="ghost" onclick="showView('student')">Plan My Meals</button><button class="ghost" onclick="showView('foodtable')">View Food Table</button><button class="ghost" onclick="showView('notifications')">Check Notifications</button></div></div></div>`;
+      card.appendChild(welcomeContent); viewArea.appendChild(card);
+
+      // wire slider controls after render
+      const container = document.querySelector('.slider-container');
+      if(container){
+        container.querySelector('.prev')?.addEventListener('click',()=>{ currentSlide = currentSlide>0?currentSlide-1:sliderImages.length-1; updateSlider(); });
+        container.querySelector('.next')?.addEventListener('click',()=>{ currentSlide = currentSlide<sliderImages.length-1?currentSlide+1:0; updateSlider(); });
+        container.querySelectorAll('.slider-dot').forEach(dot => dot.addEventListener('click', ()=>{ currentSlide = parseInt(dot.dataset.index); updateSlider(); }));
+        if(sliderImages.length>1){
+          clearInterval(window.__sliderInterval);
+          window.__sliderInterval = setInterval(()=>{ currentSlide = currentSlide<sliderImages.length-1?currentSlide+1:0; updateSlider(); }, 5000);
+        }
+      }
+      function updateSlider(){ const slider = document.querySelector('.slider'); if(slider) slider.style.transform = `translateX(-${currentSlide*100}%)`; document.querySelectorAll('.slider-dot').forEach((d,i)=>d.classList.toggle('active', i===currentSlide)); }
+    }
+
+    // Student view
+    async function renderStudentView(){
+      viewArea.innerHTML = ''; const card = el('div'); card.className='card';
+      const heading = el('h3'); heading.textContent = 'My Meals'; heading.style.margin='0 0 8px'; card.appendChild(heading);
+      const profileBox = el('div'); profileBox.className='profile-box';
+      if(!currentProfile){ profileBox.innerHTML = `<div class="muted small">Loading profile...</div>`; card.appendChild(profileBox); viewArea.appendChild(card); return; }
+      profileBox.innerHTML = `<div class="profile-row"><div class="profile-label">Student ID</div><div class="profile-value">${currentProfile.studentId||''}</div></div>
+        <div class="profile-row"><div class="profile-label">Name</div><div class="profile-value">${currentProfile.name||''}</div></div>
+        <div class="profile-row"><div class="profile-label">Gmail</div><div class="profile-value">${currentProfile.email||'<em class="muted">missing</em>'}</div></div>
+        <div class="profile-row"><div class="profile-label">Phone</div><div class="profile-value">${currentProfile.phone||'<em class="muted">missing</em>'}</div></div>`;
+      let needsCompletion = false; if(!currentProfile.email || !currentProfile.phone) needsCompletion = true;
+      if(needsCompletion){
+        const warn = el('div'); warn.className='alert'; warn.textContent = 'Please complete your profile (Gmail & Phone) before using My Meals.'; profileBox.appendChild(warn);
+        const form = el('div'); form.style.marginTop='10px';
+        form.innerHTML = `<input id="upd_email" placeholder="Gmail" class="pill" style="width:100%;margin-top:8px;padding:10px;"><input id="upd_phone" placeholder="Phone number" class="pill" style="width:100%;margin-top:8px;padding:10px;"><div style="margin-top:8px; display:flex; gap:8px"><button id="saveProfileBtn" class="cta">Save profile</button></div><div id="saveProfileMsg" class="muted small" style="margin-top:8px"></div>`;
+        profileBox.appendChild(form); card.appendChild(profileBox); viewArea.appendChild(card);
+        $('#saveProfileBtn').addEventListener('click', async ()=>{ const e = $('#upd_email').value.trim(); const p = $('#upd_phone').value.trim(); const msg = $('#saveProfileMsg'); msg.textContent=''; if(!e||!p){ msg.textContent='Enter both Gmail and phone'; return;} try{ await setDoc(doc(db,'students',currentUser.uid),{ email:e, phone:p },{merge:true}); const sd = await getDoc(doc(db,'students',currentUser.uid)); currentProfile = sd.exists()?sd.data():currentProfile; renderStudentView(); }catch(err){ msg.textContent='Error: '+err.message;} });
+        return;
+      }
+      card.appendChild(profileBox);
+
+      const dateRow = el('div'); dateRow.className='dates-row'; const dates=[]; const today = new Date();
+      for(let i=1;i<=3;i++){ dates.push(new Date(today.getFullYear(), today.getMonth(), today.getDate()+i)); }
+      let selectedDate = dates[0];
+      dates.forEach((d, idx)=>{ const dc = el('div'); dc.className='day-card' + (idx===0?' selected':''); dc.dataset.date = formatDate(d); dc.innerHTML = `<div style="font-weight:700">${niceDateLabel(d)}</div><div class="date-small">${formatDate(d)}</div>`; dc.addEventListener('click', ()=>{ document.querySelectorAll('.day-card').forEach(x=>x.classList.remove('selected')); dc.classList.add('selected'); selectedDate = d; loadConfirmationForDate(formatDate(selectedDate)); }); dateRow.appendChild(dc); });
+      card.appendChild(dateRow);
+
+      const mealsWrap = el('div'); mealsWrap.className='meals'; const mealNames = ['breakfast','lunch','dinner']; const mealLabels = {breakfast:'Breakfast', lunch:'Lunch', dinner:'Dinner'}; const mealEls = {}; const selectionState = { breakfast:false, lunch:false, dinner:false };
+      mealNames.forEach(name=>{ const m = el('div'); m.className='meal-toggle'; m.innerHTML = `<div style="font-weight:800; font-size:15px">${mealLabels[name]}</div><div class="muted small">Tap to toggle</div>`; m.addEventListener('click', ()=>{ m.classList.toggle('on'); selectionState[name] = m.classList.contains('on'); }); mealsWrap.appendChild(m); mealEls[name]=m; });
+      card.appendChild(mealsWrap);
+
+      const lower = el('div'); lower.style.marginTop='12px'; lower.innerHTML = `<div class="row"><div class="muted small">Your current selection for <strong id="selDate">${formatDate(selectedDate)}</strong></div><div class="spacer"></div><button id="refreshBtn" class="ghost">Refresh</button><button id="submitBtn" class="cta">Submit selection</button></div>`; card.appendChild(lower);
+      viewArea.appendChild(card);
+      await loadConfirmationForDate(formatDate(selectedDate));
+      $('#refreshBtn').addEventListener('click', ()=> loadConfirmationForDate(formatDate(selectedDate)));
+      $('#submitBtn').addEventListener('click', async ()=>{ try{ await saveConfirmation(formatDate(selectedDate), selectionState); showToast('Your food has been scheduled according to your record successfully.'); }catch(err){ showToast('Error saving: '+err.message); } });
+
+      async function loadConfirmationForDate(dateStr){
+        $('#selDate').textContent = dateStr;
+        if(!currentUser) return;
+        const docId = `${currentUser.uid}_${dateStr}`; const docRef = doc(db,'confirmations',docId);
+        const dSnap = await getDoc(docRef); const meals = dSnap.exists()?dSnap.data().meals:{breakfast:false,lunch:false,dinner:false};
+        mealNames.forEach(mn=>{ selectionState[mn] = !!meals[mn]; if(selectionState[mn]) mealEls[mn].classList.add('on'); else mealEls[mn].classList.remove('on'); });
+      }
+      async function saveConfirmation(dateStr, mealsObj){
+        if(!currentUser) { alert('Please login'); return; }
+        // Cutoff enforcement could be added server-side; client-side optional check omitted here to keep file focused on add-new fix.
+        const docId = `${currentUser.uid}_${dateStr}`; const docRef = doc(db,'confirmations',docId);
+        await setDoc(docRef, { uid: currentUser.uid, studentId: currentProfile?.studentId||'', name: currentProfile?.name||'', date: dateStr, meals: { breakfast: !!mealsObj.breakfast, lunch: !!mealsObj.lunch, dinner: !!mealsObj.dinner }, updatedAt: serverTimestamp() }, { merge: true });
+      }
+    }
+
+    // History
+    async function renderHistoryView(){
+      viewArea.innerHTML=''; const card = el('div'); card.className='card'; const h = el('h3'); h.textContent='My History'; h.style.margin='0 0 8px'; card.appendChild(h);
+      if(!currentUser){ card.appendChild(el('div')).textContent = 'Please login'; viewArea.appendChild(card); return; }
+      const col = collection(db,'confirmations'); const q = query(col, where('uid','==',currentUser.uid));
+      const snap = await getDocs(q); const rows=[]; snap.forEach(d=>rows.push(d.data())); rows.sort((a,b)=>a.date<b.date?1:-1);
+      if(rows.length===0){ const p=el('div'); p.className='muted small'; p.textContent='No history yet.'; card.appendChild(p); viewArea.appendChild(card); return;}
+      const table = el('table'); table.innerHTML = `<thead><tr><th>Date</th><th>Breakfast</th><th>Lunch</th><th>Dinner</th><th>Updated</th></tr></thead>`; const tbody = el('tbody');
+      rows.forEach(r=>{ const tr=el('tr'); const updated = r.updatedAt ? (new Date(r.updatedAt.seconds*1000)).toISOString() : '-'; tr.innerHTML = `<td>${r.date}</td><td>${r.meals.breakfast?'✔':'—'}</td><td>${r.meals.lunch?'✔':'—'}</td><td>${r.meals.dinner?'✔':'—'}</td><td class="muted small">${updated}</td>`; tbody.appendChild(tr); });
+      table.appendChild(tbody); card.appendChild(table); viewArea.appendChild(card);
+    }
+
+    // Notifications
+    async function renderNotificationsView(){
+      viewArea.innerHTML=''; const card=el('div'); card.className='card'; const heading=el('h3'); heading.textContent='Notifications'; heading.style.margin='0 0 16px'; card.appendChild(heading);
+      if(currentProfile?.role==='cook' || currentProfile?.role==='admin'){
+        const composeArea = el('div'); composeArea.className='compose-area'; composeArea.innerHTML = `<h4 style="margin:0 0 8px">Send Notification</h4><textarea id="notificationText" placeholder="Type message..." rows="3"></textarea><div style="display:flex;gap:8px"><button id="sendNotification" class="cta">Send to All Students</button></div>`;
+        card.appendChild(composeArea);
+        card.querySelector('#sendNotification').addEventListener('click', async ()=>{ const message = $('#notificationText').value.trim(); if(!message){ showToast('Please enter a message'); return;} try{ await addDoc(collection(db,'notifications'), { message, sender: currentProfile.name || 'Cook', timestamp: serverTimestamp(), readBy: [] }); $('#notificationText').value=''; showToast('Notification sent'); }catch(err){ showToast('Error: '+err.message); } });
+      }
+      const listWrap = el('div'); listWrap.id='notificationsList'; listWrap.innerHTML = '<div class="muted small">Loading notifications...</div>'; card.appendChild(listWrap); viewArea.appendChild(card);
+      loadNotifications();
+    }
+
+    function setupNotificationsListener(){
+      if(notificationsUnsubscribe) notificationsUnsubscribe();
+      const q = query(collection(db,'notifications'), orderBy('timestamp','desc'));
+      notificationsUnsubscribe = onSnapshot(q, ()=>{ if(currentView === 'notifications') loadNotifications(); });
+    }
+    async function loadNotifications(){
+      if(!currentUser) return;
+      const q = query(collection(db,'notifications'), orderBy('timestamp','desc'));
+      const snapshot = await getDocs(q);
+      const notifications = []; snapshot.forEach(doc=>{ const data=doc.data(); notifications.push({ id: doc.id, ...data, time: data.timestamp ? new Date(data.timestamp.seconds*1000).toLocaleString() : 'Recently' }); });
+      const container = $('#notificationsList'); if(!container) return;
+      if(notifications.length === 0){ container.innerHTML = '<div class="muted small">No notifications yet.</div>'; return; }
+      let html = ''; notifications.forEach(n => { html += `<div class="notification-item"><div class="notification-title">${n.sender}</div><div class="muted small">${n.message}</div><div class="notification-time">${n.time}</div></div>`; });
+      container.innerHTML = html;
+    }
+
+    // Food Table
+    async function renderFoodTableView(){
+      viewArea.innerHTML=''; const card=el('div'); card.className='card'; const heading=el('h3'); heading.textContent='Food Table'; heading.style.margin='0 0 16px'; card.appendChild(heading);
+      if(currentProfile?.role==='cook' || currentProfile?.role==='admin'){ const editControls = el('div'); editControls.style.marginBottom='16px'; editControls.innerHTML = `<div style="display:flex;gap:8px;align-items:center"><button id="addFoodItem" class="cta">Add Day</button><div class="muted small">Click on meals to edit</div></div>`; card.appendChild(editControls); }
+      const foodTable = el('div'); foodTable.id='foodTableContent'; foodTable.innerHTML = '<div class="muted small">Loading food table...</div>'; card.appendChild(foodTable); viewArea.appendChild(card);
+      await loadFoodTable();
+    }
+
+    async function loadFoodTable(){
+      const snapshot = await getDocs(collection(db,'foodtable'));
+      const foodItems = [];
+      snapshot.forEach(doc => foodItems.push({ id: doc.id, ...doc.data() }));
+      foodItems.sort((a,b)=>(a.dayOrder||0)-(b.dayOrder||0));
+      const container = $('#foodTableContent'); if(!container) return;
+      if(foodItems.length === 0){ container.innerHTML = '<div class="muted small">No food items added yet.</div>'; return; }
+      let html = '';
+      foodItems.forEach(item => {
+        const isCook = currentProfile?.role === 'cook' || currentProfile?.role === 'admin';
+        html += `<div class="food-item"><div class="food-day">${item.day}</div><div class="food-meals"><div><strong>Breakfast:</strong> ${item.breakfast||'Not set'}</div><div><strong>Lunch:</strong> ${item.lunch||'Not set'}</div><div><strong>Dinner:</strong> ${item.dinner||'Not set'}</div></div>${isCook?`<div class="food-actions"><button class="ghost edit-btn" data-id="${item.id}">Edit</button><button class="ghost del-btn" data-id="${item.id}">Delete</button></div>`:''}</div>`;
+      });
+      container.innerHTML = html;
+    }
+
+    async function addFoodItem(){
+      const day = prompt('Enter day name (e.g., Monday):'); if(!day) return;
+      try{ await addDoc(collection(db,'foodtable'), { day, breakfast: '', lunch:'', dinner:'', dayOrder: Date.now() }); await loadFoodTable(); showToast('Food item added'); } catch(err){ showToast('Error adding food item: '+err.message); }
+    }
+    async function editFoodItem(id){
+      const docRef = doc(db,'foodtable',id); const snap = await getDoc(docRef); if(!snap.exists()) return; const data = snap.data();
+      const breakfast = prompt('Enter breakfast menu:', data.breakfast||''); if(breakfast===null) return;
+      const lunch = prompt('Enter lunch menu:', data.lunch||''); if(lunch===null) return;
+      const dinner = prompt('Enter dinner menu:', data.dinner||''); if(dinner===null) return;
+      try{ await updateDoc(docRef, { breakfast, lunch, dinner }); await loadFoodTable(); showToast('Food item updated'); } catch(err){ showToast('Error updating food item: '+err.message); }
+    }
+    async function deleteFoodItem(id){
+      if(!confirm('Are you sure you want to delete this food item?')) return;
+      try{ await deleteDoc(doc(db,'foodtable',id)); await loadFoodTable(); showToast('Food item deleted'); } catch(err){ showToast('Error deleting food item: '+err.message); }
+    }
+
+    // Cook Dashboard (realtime via onSnapshot)
+    async function renderCookView(){
+      if(!currentProfile || (currentProfile.role !== 'cook' && currentProfile.role !== 'admin')) { viewArea.innerHTML = `<div class="card"><div class="alert">Access denied: your account is not marked as a cook. Ask an admin to set role: "cook".</div></div>`; return; }
+      if(cookUnsubscribe){ cookUnsubscribe(); cookUnsubscribe = null; }
+      viewArea.innerHTML=''; const card=el('div'); card.className='card'; const heading=el('h3'); heading.textContent='Cook Dashboard — Confirmations'; heading.style.margin='0 0 8px'; card.appendChild(heading);
+      const dates=[]; const today = new Date(); for(let i=0;i<3;i++){ dates.push(new Date(today.getFullYear(),today.getMonth(),today.getDate()+i)); }
+      let selected = dates[0]; const dateRow = el('div'); dateRow.className='dates-row';
+      dates.forEach((d,idx)=>{ const dc=el('div'); dc.className='day-card' + (idx===0?' selected':''); dc.dataset.date = formatDate(d); dc.innerHTML = `<div style="font-weight:700">${idx===0?'Today':niceDateLabel(d)}</div><div class="date-small">${formatDate(d)}</div>`; dc.addEventListener('click', ()=>{ document.querySelectorAll('.day-card').forEach(x=>x.classList.remove('selected')); dc.classList.add('selected'); selected=d; startRealtimeCounts(); }); dateRow.appendChild(dc); });
+      card.appendChild(dateRow);
+      const actions = el('div'); actions.style.marginTop='12px'; actions.innerHTML = `<div style="display:flex;gap:8px;align-items:center"><button id="refreshCounts" class="ghost">Manual refresh</button><div class="muted small">Realtime updates enabled</div><div class="spacer"></div><button id="exportAll" class="cta">Export confirmations CSV</button></div>`;
+      card.appendChild(actions);
+      const listWrap = el('div'); listWrap.style.marginTop='12px'; listWrap.innerHTML = `<div id="confirmedList">Loading...</div>`; card.appendChild(listWrap); viewArea.appendChild(card);
+      $('#refreshCounts').addEventListener('click', ()=> startRealtimeCounts());
+      $('#exportAll').addEventListener('click', ()=> exportCSV(true));
+      startRealtimeCounts();
+
+      function startRealtimeCounts(){
+        if(cookUnsubscribe) cookUnsubscribe();
+        const dateStr = formatDate(selected);
+        const colRef = collection(db,'confirmations');
+        const qRef = query(colRef, where('date','==',dateStr));
+        cookUnsubscribe = onSnapshot(qRef, snapshot => {
+          const rows=[]; let cb=0, cl=0, cd=0;
+          snapshot.forEach(s=>{ const data=s.data(); rows.push(data); if(data.meals?.breakfast) cb++; if(data.meals?.lunch) cl++; if(data.meals?.dinner) cd++; });
+          const container = $('#confirmedList'); if(!container) return;
+          if(rows.length===0){ container.innerHTML = '<div class="muted small">No confirmations for this date.</div>'; return; }
+          rows.sort((a,b)=> (a.name||'').localeCompare(b.name||''));
+          let html = `<table><thead><tr><th>Student ID</th><th>Name</th><th>Breakfast</th><th>Lunch</th><th>Dinner</th><th>Updated</th></tr></thead><tbody>`;
+          rows.forEach(r=>{ const updated = r.updatedAt ? (new Date(r.updatedAt.seconds*1000)).toISOString() : '-'; html += `<tr><td>${r.studentId||''}</td><td>${r.name||''}</td><td>${r.meals.breakfast?'✔':'—'}</td><td>${r.meals.lunch?'✔':'—'}</td><td>${r.meals.dinner?'✔':'—'}</td><td class="muted small">${updated}</td></tr>`; });
+          html += `<tr style="font-weight:800;background:rgba(255,255,255,0.02)"><td colspan="2">Totals</td><td>${cb}</td><td>${cl}</td><td>${cd}</td><td></td></tr></tbody></table>`;
+          container.innerHTML = html;
+        }, err => { console.error('snapshot error',err); $('#confirmedList').innerHTML = '<div class="muted small">Error loading confirmations.</div>'; });
+      }
+    }
+
+    // CSV Export
+    async function exportCSV(all=false){
+      if(!currentUser){ alert('Login to export'); return; }
+      if(all && currentProfile?.role !== 'cook' && currentProfile?.role !== 'admin'){ alert('Only cook can export all confirmations'); return; }
+      const rows=[]; if(all){ const snap=await getDocs(collection(db,'confirmations')); snap.forEach(s=>rows.push(s.data())); } else { const qRef=query(collection(db,'confirmations'), where('uid','==',currentUser.uid)); const snap=await getDocs(qRef); snap.forEach(s=>rows.push(s.data())); }
+      if(rows.length===0){ alert('No data to export'); return; }
+      const cols=['date','studentId','name','breakfast','lunch','dinner','updatedAt']; const csv=[]; csv.push(cols.join(','));
+      rows.forEach(r=>{ const updatedIso = r.updatedAt ? new Date(r.updatedAt.seconds*1000).toISOString() : ''; const line = [ r.date||'', r.studentId||'', `"${(r.name||'').replace(/"/g,'""')}"`, r.meals?.breakfast?'1':'0', r.meals?.lunch?'1':'0', r.meals?.dinner?'1':'0', updatedIso ]; csv.push(line.join(',')); });
+      const blob=new Blob([csv.join('\n')], {type:'text/csv;charset=utf-8;'}); const filename = all ? `confirmations_all_${(new Date()).toISOString().slice(0,10)}.csv` : `confirmations_${currentProfile?.studentId || currentUser.uid}.csv`; const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); URL.revokeObjectURL(url); a.remove();
+    }
+
+    // Notifications listener cleanup on unload
+    window.addEventListener('beforeunload', ()=>{ if(notificationsUnsubscribe) notificationsUnsubscribe(); if(cookUnsubscribe) cookUnsubscribe(); if(foodScheduleUnsubscribe) foodScheduleUnsubscribe(); });
+
+    // Delegated click listener (robust binding for Add/Edit/Delete)
+    document.addEventListener('click', (ev) => {
+      const t = ev.target;
+      if(!t) return;
+
+      if(t.id === 'addFoodItem'){ ev.preventDefault(); addFoodItem(); }
+      if(t.classList.contains('edit-btn')){ ev.preventDefault(); const id = t.dataset.id; if(id) editFoodItem(id); }
+      if(t.classList.contains('del-btn')){ ev.preventDefault(); const id = t.dataset.id; if(id) deleteFoodItem(id); }
+    });
+
+    // Make functions global for inline usage if needed
+    window.showView = showView;
+    window.editFoodItem = editFoodItem;
+    window.deleteFoodItem = deleteFoodItem;
+  </script>
+</body>
+</html>
