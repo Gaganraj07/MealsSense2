@@ -7,16 +7,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
   <style>
-    /* ===============================
-       GLOBAL VARIABLES & BASE
-    =============================== */
     :root{
       --bg:#0f1724;
       --card: rgba(255,255,255,0.06);
       --glass: rgba(255,255,255,0.06);
       --accent:#ffb300;
       --muted: rgba(255,255,255,0.6);
-      --success: #16a34a; /* green */
+      --success: #16a34a;
       --danger: #ef4444;
       --glass-border: rgba(255,255,255,0.08);
       --max-width: 1250px;
@@ -50,19 +47,17 @@
     .cook-mode .logo{ background: linear-gradient(135deg,#ff7a7a,#ffb300); }
     .cook-mode .cta{ background: linear-gradient(90deg,#ff7a7a,#ffb300); color:#082032; }
 
-    /* ============= Updated: App container to use 90% viewport ============= */
     .app{
-      width: 200vw;                     /* cover 90% of the browser width */
-      max: width 1200px;
+      width: 100%;
+      max-width: 1400px;
       display:grid;
-      grid-template-columns: 350px 1fr; /* slightly wider sidebar */
+      grid-template-columns: 350px 1fr;
       gap:24px;
       align-items:stretch;
-      min-height:90vh;                 /* fill 90% browser height */
+      min-height:90vh;
       margin:0 auto;
     }
 
-    /* ============= Updated: Sidebar width bumped to prevent wrapping ============= */
     .sidebar{
       background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
       border-radius:16px;
@@ -73,112 +68,34 @@
       flex-direction:column;
       justify-content:flex-start;
       height:100%;
-      width: 350px;          /* ensure sidebar uses the new width */
+      width: 350px;
       min-width: 350px;
     }
 
-    .brand{
-      display:flex;gap:12px;align-items:center;margin-bottom:18px;
-    }
-    .logo{
-      width:48px;height:48px;border-radius:12px;
-      background:linear-gradient(135deg,var(--accent),#ff7a7a);
-      display:flex;align-items:center;justify-content:center;
-      font-weight:900;color:#082032;font-size:18px;
-      box-shadow:0 6px 20px rgba(255,179,77,0.12);
-    }
+    .brand{ display:flex;gap:12px;align-items:center;margin-bottom:18px; }
+    .logo{ width:48px;height:48px;border-radius:12px; background:linear-gradient(135deg,var(--accent),#ff7a7a); display:flex;align-items:center;justify-content:center; font-weight:900;color:#082032;font-size:18px; box-shadow:0 6px 20px rgba(255,179,77,0.12); }
     h1.title{font-size:18px;margin:0 0 2px;letter-spacing:0.2px;}
     p.subtitle{margin:0;font-size:12px;color:var(--muted);}
 
-    .hpbox{margin-left:auto;width:48px;height:48px;border-radius:10px;overflow:hidden;
-           border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .hpbox{margin-left:auto;width:48px;height:48px;border-radius:10px;overflow:hidden; border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);cursor:pointer;display:flex;align-items:center;justify-content:center;}
     .hpbox img{width:100%;height:100%;object-fit:contain;display:block;background:#fff;border-radius:6px;}
     .hpbox .placeholder{color:var(--muted);font-weight:700}
 
-    /* ============= Updated: Nav must be vertical and buttons full-width ============= */
-    .nav{
-      margin-top:18px;
-      display:flex;
-      flex-direction:column; /* vertical stack */
-      gap:8px;
-      align-items:stretch;
-      width:100%;
-      box-sizing:border-box;
-    }
-    .nav .btn{
-      display:flex;               /* allow icon + label layout */
-      align-items:center;
-      gap:8px;
-      padding:10px 12px;
-      border-radius:10px;
-      background:transparent;
-      color:var(--muted);
-      border:1px solid transparent;
-      cursor:pointer;
-      font-weight:600;
-      transition:all .18s;
-      text-align:left;
-      font-size:14px;
-      width:100%;                /* important: full width so each is a row */
-      justify-content:flex-start;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      box-sizing:border-box;
-    }
+    .nav{ margin-top:18px; display:flex; flex-direction:column; gap:8px; align-items:stretch; width:100%; box-sizing:border-box;}
+    .nav .btn{ display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:10px; background:transparent; color:var(--muted); border:1px solid transparent; cursor:pointer; font-weight:600; transition:all .18s; text-align:left; font-size:14px; width:100%; justify-content:flex-start; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; box-sizing:border-box; }
     .nav .btn:hover{transform:translateY(-2px);color:#fff}
-    .nav .btn.active{background:linear-gradient(90deg,rgba(255,179,77,0.12),rgba(255,125,125,0.06));
-                color:#fff;border:1px solid rgba(255,255,255,0.04);}
+    .nav .btn.active{background:linear-gradient(90deg,rgba(255,179,77,0.12),rgba(255,125,125,0.06)); color:#fff;border:1px solid rgba(255,255,255,0.04);}
 
-    /* keep .btn generic in case other selectors use it (no change) */
-    .btn{
-      /* fallback styles preserved for any .btn outside .nav */
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 12px;
-      border-radius:10px;
-      background:transparent;
-      color:var(--muted);
-      border:1px solid transparent;
-      cursor:pointer;
-      font-weight:600;
-      transition:all .18s;
-      text-align:left;
-      font-size:14px;
-    }
+    .btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 12px; border-radius:10px; background:transparent; color:var(--muted); border:1px solid transparent; cursor:pointer; font-weight:600; transition:all .18s; text-align:left; font-size:14px; }
 
-    .card{
-      margin-top:14px;padding:12px;border-radius:12px;background:var(--card);
-      border:1px solid var(--glass-border);
-    }
+    .card{ margin-top:14px;padding:12px;border-radius:12px;background:var(--card); border:1px solid var(--glass-border); }
 
-    /* slight padding tweak to balance with the wider sidebar */
-    .main{
-      min-height:100%;
-      border-radius:16px;
-      padding:22px; /* tiny increase for better balance with wider sidebar */
-      background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
-      border:1px solid var(--glass-border);
-      box-shadow:0 8px 40px rgba(5,8,23,0.65);
-      display:flex;
-      flex-direction:column;
-    }
+    .main{ min-height:100%; border-radius:16px; padding:22px; background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01)); border:1px solid var(--glass-border); box-shadow:0 8px 40px rgba(5,8,23,0.65); display:flex; flex-direction:column; }
 
-    .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-    }
+    .topbar{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
     .greet{font-size:18px;font-weight:700;}
     .userbubble{display:flex;align-items:center;gap:10px;}
-    .avatar{
-      width:44px;height:44px;border-radius:10px;
-      display:flex;align-items:center;justify-content:center;
-      font-weight:700;background:linear-gradient(135deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02));
-      border:1px solid rgba(255,255,255,0.03);
-    }
+    .avatar{ width:44px;height:44px;border-radius:10px; display:flex;align-items:center;justify-content:center; font-weight:700;background:linear-gradient(135deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,0.03); }
 
     .profile-box{margin-top:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid var(--glass-border);}
     .profile-row{display:flex;gap:12px;align-items:center;margin-bottom:8px;}
@@ -186,28 +103,14 @@
     .profile-value{font-weight:700}
 
     .dates-row{display:flex;gap:8px;margin-top:14px;}
-    .day-card{
-      min-width:110px;padding:10px;border-radius:12px;text-align:center;
-      cursor:pointer;user-select:none;background:rgba(255,255,255,0.02);
-      border:1px solid transparent;
-    }
-    .day-card.selected{
-      background:linear-gradient(90deg,rgba(255,179,77,0.08),rgba(255,125,125,0.03));
-      border:1px solid rgba(255,255,255,0.04);color:#fff;
-    }
+    .day-card{ min-width:110px;padding:10px;border-radius:12px;text-align:center; cursor:pointer;user-select:none;background:rgba(255,255,255,0.02); border:1px solid transparent; }
+    .day-card.selected{ background:linear-gradient(90deg,rgba(255,179,77,0.08),rgba(255,125,125,0.03)); border:1px solid rgba(255,255,255,0.04); color:#fff; }
     .date-small{font-size:12px;color:var(--muted);}
 
     .meals{display:flex;gap:12px;margin-top:14px;}
-    .meal-toggle{
-      flex:1;padding:14px;border-radius:12px;text-align:center;cursor:pointer;user-select:none;
-      border:1px dashed rgba(255,255,255,0.04);background:rgba(255,255,255,0.01);
-      transition:transform .12s,box-shadow .12s;
-    }
+    .meal-toggle{ flex:1;padding:14px;border-radius:12px;text-align:center;cursor:pointer;user-select:none; border:1px dashed rgba(255,255,255,0.04);background:rgba(255,255,255,0.01); transition:transform .12s,box-shadow .12s;}
     .meal-toggle:hover{transform:translateY(-4px);}
-    .meal-toggle.on{
-      background:linear-gradient(180deg,rgba(34,197,94,0.12),rgba(34,197,94,0.06));
-      border:3px solid var(--success);box-shadow:0 8px 25px rgba(34,197,94,0.05);
-    }
+    .meal-toggle.on{ background:linear-gradient(180deg,rgba(34,197,94,0.12),rgba(34,197,94,0.06)); border:3px solid var(--success); box-shadow:0 8px 25px rgba(34,197,94,0.05); }
 
     .muted{color:var(--muted);}
 
@@ -217,119 +120,48 @@
     .row{display:flex;gap:12px;align-items:center;}
     .spacer{flex:1;}
     .small{font-size:13px;}
-    .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);
-          font-weight:700;font-size:13px;}
-    .cta{
-      padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#ff7a7a);
-      color:#082032;border:none;font-weight:800;cursor:pointer;
-    }
-    .ghost{
-      background:transparent;border:1px solid rgba(255,255,255,0.04);
-      padding:8px 10px;border-radius:10px;color:var(--muted);cursor:pointer;
-    }
+    .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03); font-weight:700;font-size:13px;}
+    .cta{ padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#ff7a7a); color:#082032;border:none;font-weight:800;cursor:pointer; }
+    .ghost{ background:transparent;border:1px solid rgba(255,255,255,0.04); padding:8px 10px;border-radius:10px;color:var(--muted);cursor:pointer; }
     .ghost:hover{color:#fff;border-color:rgba(255,255,255,0.1);}
-    .alert{
-      padding:10px;border-radius:10px;background:rgba(239,68,68,0.08);
-      border:1px solid rgba(239,68,68,0.12);color:#ffdddd;margin-top:10px;
-    }
-    .toast {
-      position:fixed; left:50%; transform:translateX(-50%); bottom:28px;
-      background: rgba(15,23,42,0.95); color:#eaffea; padding:12px 18px; border-radius:10px;
-      box-shadow: 0 6px 30px rgba(0,0,0,0.6); display:none; z-index:9999; font-weight:700;
-    }
+    .alert{ padding:10px;border-radius:10px;background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.12); color:#ffdddd; margin-top:10px; }
+    .toast { position:fixed; left:50%; transform:translateX(-50%); bottom:28px; background: rgba(15,23,42,0.95); color:#eaffea; padding:12px 18px; border-radius:10px; box-shadow: 0 6px 30px rgba(0,0,0,0.6); display:none; z-index:9999; font-weight:700; }
     .toast.show { display:block; animation:toastIn .26s ease; }
     @keyframes toastIn { from { opacity:0; transform: translateX(-50%) translateY(8px); } to { opacity:1; transform: translateX(-50%) translateY(0);} }
 
-    /* slider styles */
-    /* slider styles */
-.slider-container {
-  position: relative;
-  width: 1390px;
-  height: 650px; /* increased from 300px → 420px */
-  border-radius: 16px;
-  overflow: hidden;
-  margin-bottom: 16px;
-}
+    /* ===== Slider: responsive, centered, fixed target width/height ===== */
+    .slider-container {
+      position: relative;
+      width: 100%;
+      max-width: 1400px;   /* target width for your optimized images */
+      height: 650px;       /* requested display height */
+      border-radius: 16px;
+      overflow: hidden;
+      margin: 0 auto 16px; /* center horizontally and keep bottom spacing */
+      box-sizing: border-box;
+    }
+    .slider { display:flex; transition: transform 0.6s ease; height:100%; }
+    .slide { min-width:100%; height:100%; background-size:cover; background-position:center; background-repeat:no-repeat; display:flex; align-items:flex-end; justify-content:flex-start; padding:20px; }
+    .slide-content { background: rgba(0,0,0,0.55); padding: 14px 18px; border-radius: 8px; color: white; max-width:60%; }
+    .slider-nav { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); display:flex; gap:8px; z-index:10; }
+    .slider-dot { width:10px; height:10px; border-radius:50%; background: rgba(255,255,255,0.3); cursor:pointer; }
+    .slider-dot.active { background: var(--accent); }
+    .slider-arrow { position:absolute; top:50%; transform:translateY(-50%); background: rgba(0,0,0,0.4); color:white; border:none; width:42px; height:42px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:20px; transition:background .2s ease; z-index:10; }
+    .slider-arrow:hover { background: rgba(0,0,0,0.6); }
+    .slider-arrow.prev { left:16px; }
+    .slider-arrow.next { right:16px; }
 
-.slider {
-  display: flex;
-  transition: transform 0.6s ease;
-  height: 100%;
-}
+    .notification-item { padding:12px; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .notification-item:last-child { border-bottom:none; }
+    .notification-title { font-weight:700; margin-bottom:4px; }
+    .notification-time { font-size:12px; color: var(--muted); }
 
-.slide {
-  min-width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
-  padding: 20px;
-}
-
-.slide-content {
-  background: rgba(0,0,0,0.55);
-  padding: 14px 18px;
-  border-radius: 8px;
-  color: white;
-  max-width: 60%;
-}
-
-.slider-nav {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 8px;
-}
-
-.slider-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.3);
-  cursor: pointer;
-}
-
-.slider-dot.active { background: var(--accent); }
-
-.slider-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.4);
-  color: white;
-  border: none;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  transition: background 0.2s ease;
-}
-
-.slider-arrow:hover { background: rgba(0,0,0,0.6); }
-.slider-arrow.prev { left: 16px; }
-.slider-arrow.next { right: 16px; }
-
-
-    .notification-item { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    .notification-item:last-child { border-bottom: none; }
-    .notification-title { font-weight: 700; margin-bottom: 4px; }
-    .notification-time { font-size: 12px; color: var(--muted); }
-    .compose-area textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; color: white; margin-bottom: 8px; resize: vertical; }
-
-    .food-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    .food-item:last-child { border-bottom: none; }
-    .food-day { font-weight: 700; min-width: 100px; }
-    .food-meals { flex: 1; }
-    .food-actions { display: flex; gap: 8px; }
+    .compose-area textarea { width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:12px; color:white; margin-bottom:8px; resize:vertical; }
+    .food-item { display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .food-item:last-child { border-bottom:none; }
+    .food-day { font-weight:700; min-width:100px; }
+    .food-meals { flex:1; }
+    .food-actions { display:flex; gap:8px; }
 
     .sidebar .card, .main .card{overflow:auto;}
     .main{box-sizing:border-box;overflow:auto;}
@@ -339,9 +171,21 @@
       .app{grid-template-columns:1fr;gap:16px;min-height:80vh;width:100%;}
       .sidebar{order:2;width:auto;min-width:0;}
       .main{order:1;}
+      .slider-container{height:360px;}
     }
-  </style>
 
+    /* stable home grid used for many views so layout doesn't jump */
+    .home-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 16px;
+      align-items: start;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #viewArea { box-sizing: border-box; width:100%; }
+
+  </style>
 </head>
 <body>
   <div class="app" id="appRoot">
@@ -449,8 +293,7 @@
 
     const ALLOWED_COOK_IDS = ['COOK01','COOK02','COOK03'];
 
-    // ---------- Slider images initialization (added 5 default SVG images) ----------
-    // If user has saved slider_images in localStorage, we use that; otherwise we seed with 5 SVG placeholders.
+    // ---------- Slider images initialization ----------
     function buildSVGData(text, bg, fg){
       const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='500'><rect width='100%' height='100%' fill='${bg}'/><g font-family='Inter, Arial' font-weight='700'><text x='50%' y='46%' text-anchor='middle' dominant-baseline='middle' font-size='40' fill='${fg}'>${text}</text><text x='50%' y='62%' text-anchor='middle' dominant-baseline='middle' font-size='20' fill='${fg}' opacity='0.9'>MealsSense — Hostel Meals RSVP</text></g></svg>`;
       return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
@@ -464,56 +307,45 @@
       { url: buildSVGData('Save Food · Save Money', '#051927', '#ffb300'), title: 'Plan Ahead', description: 'Reduce waste with planning' }
     ];
 
-    // load from localStorage if present, otherwise seed defaults
-    // Easy preloaded local images — will always load from the given folder
-let sliderImages = [
-  { url: 'images/11.jpg', title: 'MealsSense', description: 'Plan your daily meals smartly' },
-  { url: 'images/222.png', title: 'MealsSense', description: 'Nutritious and delicious hostel food' },
-  { url: 'images/333.png', title: 'MealsSense', description: 'Easy meal selection system' },
-  { url: 'images/4.png', title: 'MealsSense', description: 'Avoid food waste — choose wisely' },
-  { url: 'images/5.png', title: 'MealsSense', description: 'Simplifying hostel dining for students' }
-];
-
+    // local images (update paths as needed)
+    let sliderImages = JSON.parse(localStorage.getItem('slider_images') || 'null') || [
+      { url: 'images/1.png', title: 'MealsSense', description: 'Plan your daily meals smartly' },
+      { url: 'images/2.png', title: 'MealsSense', description: 'Nutritious and delicious hostel food' },
+      { url: 'images/3.png', title: 'MealsSense', description: 'Easy meal selection system' },
+      { url: 'images/4.png', title: 'MealsSense', description: 'Avoid food waste — choose wisely' },
+      { url: 'images/5.png', title: 'MealsSense', description: 'Simplifying hostel dining for students' }
+    ];
 
     if(!sliderImages || !Array.isArray(sliderImages) || sliderImages.length === 0){
       sliderImages = defaultSliderImages.slice();
-      // persist so next load keeps them
       localStorage.setItem('slider_images', JSON.stringify(sliderImages));
     }
     let currentSlide = 0;
 
-    // ---------- Logo upload handling (UNIFIED) ----------
+    // ---------- Logo upload handling ----------
     const hpbox = $('#hpbox'); const hpUploader = $('#hpUploader'); const hpLogo = $('#hpLogo');
     const storedLogo = localStorage.getItem('mealsense_logo_data');
     if(storedLogo){ hpLogo.src = storedLogo; hpLogo.style.display = 'block'; hpbox.querySelector('.placeholder')?.remove(); }
-
     hpbox.addEventListener('click', ()=> hpUploader.click());
-
-    // Unified uploader: sets sidebar logo + adds to slider_images
     hpUploader.addEventListener('change', (e) => {
       const files = Array.from(e.target.files || []);
       if (files.length === 0) return;
-
       const promises = files.map(f => new Promise((res, rej) => {
         const r = new FileReader();
         r.onload = ev => res(ev.target.result);
         r.onerror = rej;
         r.readAsDataURL(f);
       }));
-
       Promise.all(promises).then(dataUrls => {
-        // set first as sidebar logo
         const first = dataUrls[0];
         localStorage.setItem('mealsense_logo_data', first);
         hpLogo.src = first; hpLogo.style.display = 'block';
         const ph = hpbox.querySelector('.placeholder'); if (ph) ph.remove();
-
-        // Save slider images under a single key 'slider_images'
         const key = 'slider_images';
         const arr = JSON.parse(localStorage.getItem(key) || '[]');
         const newArr = arr.concat(dataUrls.map(d => ({ url: d, title: 'MealsSense', description: 'Hostel meal management' })));
         localStorage.setItem(key, JSON.stringify(newArr));
-        sliderImages = newArr; // update runtime array
+        sliderImages = newArr;
         showToast('Uploaded image(s) — added to slider');
         if (currentView === 'home') renderHomeView();
       }).catch(err => {
@@ -543,9 +375,9 @@ let sliderImages = [
             await addDoc(collection(db, 'foodtable'), days[i]);
           }
         }
-        const notificationsSnapshot = await getDocs(collection(db, 'notifications'));
+        const notificationsSnapshot = await getDocs(collection(db,'notifications'));
         if (notificationsSnapshot.empty) {
-          await addDoc(collection(db, 'notifications'), { message: 'Welcome to MealsSense! Please make your meal selections for tomorrow.', sender: 'System', timestamp: serverTimestamp(), readBy: [] });
+          await addDoc(collection(db,'notifications'), { message: 'Welcome to MealsSense! Please make your meal selections for tomorrow.', sender: 'System', timestamp: serverTimestamp(), readBy: [] });
         }
       } catch (err) {
         console.warn('initializeSampleData error', err);
@@ -674,18 +506,14 @@ let sliderImages = [
         await initializeSampleData();
 
         if(currentProfile?.role === 'cook' || currentProfile?.role === 'admin'){
-  document.documentElement.classList.add('cook-mode');
-  navCookBtn.style.display='inline-flex'; 
-  quickTips.style.display = 'none';
-
-  // Hide student-only navigation tabs
-  $('#nav_student').style.display='none';
-  $('#nav_history').style.display='none';
-  $('#nav_home').style.display='none'; // 👈 Added line to hide Home tab
-
-  showView('cook'); // Open Cook Dashboard directly
-}
- else {
+          document.documentElement.classList.add('cook-mode');
+          navCookBtn.style.display='inline-flex';
+          quickTips.style.display = 'none';
+          $('#nav_student').style.display='none';
+          $('#nav_history').style.display='none';
+          $('#nav_home').style.display='none';
+          showView('cook');
+        } else {
           document.documentElement.classList.remove('cook-mode');
           navCookBtn.style.display='none'; quickTips.style.display='block';
           $('#nav_student').style.display='inline-flex'; $('#nav_history').style.display='inline-flex';
@@ -703,34 +531,28 @@ let sliderImages = [
         $('#authArea').style.display='block';
         navButtons.style.display='none';
         viewArea.innerHTML = `
-          <div style="display:grid;grid-template-columns:1fr 360px;gap:16px">
-            <div class="card">
-              <h3 style="margin:0 0 8px">Welcome to MealsSense</h3>
-              <p class="muted small">MealsSense helps students confirm meals a day ahead so food isn't wasted. Quick, simple and designed for students.</p>
-              <h4 style="margin-top:12px">How it works</h4>
-              <ul style="padding-left:18px; line-height:1.6; color:var(--muted)">
-                <li>Register with your Student ID, Gmail & phone (required).</li>
-                <li>Choose meals you want for the next day (and up to 2 days ahead).</li>
-                <li>Click <strong>Submit selection</strong> to save your schedule.</li>
-                <li>Your choices are private — only the cook sees aggregated counts, not individual details.</li>
-              </ul>
-              <h4 style="margin-top:12px">Student tips</h4>
-              <ul style="padding-left:18px; line-height:1.6; color:var(--muted)">
-                <li>Make changes any time before the cutoff (set by admin).</li>
-                <li>Keep your profile (Gmail & phone) updated for quick communication.</li>
-                <li>Use the History tab to review previous selections.</li>
-              </ul>
-            </div>
-            <div class="card">
-              <h3 style="margin:0 0 8px">Student FAQ</h3>
-              <ul style="padding-left:18px; line-height:1.6; color:var(--muted)">
-                <li><strong>Q:</strong> Can I change my choice after submitting?<br><strong>A:</strong> Yes — until the cutoff time.</li>
-                <li><strong>Q:</strong> Who sees my selection?<br><strong>A:</strong> Only aggregated counts are visible to the cook; individual history is private to you.</li>
-                <li><strong>Q:</strong> Is the app mobile friendly?<br><strong>A:</strong> Yes — use it on your phone browser.</li>
-              </ul>
-            </div>
-          </div>
-        `;
+  <div class="home-grid">
+    <div class="card">
+      <h3 style="margin:0 0 8px">Welcome to MealsSense</h3>
+      <p class="muted small">MealsSense helps students confirm meals a day ahead so food isn't wasted. Quick, simple and designed for students.</p>
+      <h4 style="margin-top:12px">How it works</h4>
+      <ul style="padding-left:18px; line-height:1.6; color:var(--muted)">
+        <li>Register with your Student ID, Gmail & phone (required).</li>
+        <li>Choose meals you want for the next day (and up to 2 days ahead).</li>
+        <li>Click <strong>Submit selection</strong> to save your schedule.</li>
+        <li>Your choices are private — only the cook sees aggregated counts, not individual details.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin:0 0 8px">Student FAQ</h3>
+      <ul style="padding-left:18px; line-height:1.6; color:var(--muted)">
+        <li><strong>Q:</strong> Can I change my choice after submitting?<br><strong>A:</strong> Yes — until the cutoff time.</li>
+        <li><strong>Q:</strong> Who sees my selection?<br><strong>A:</strong> Only aggregated counts are visible to the cook; individual history is private to you.</li>
+        <li><strong>Q:</strong> Is the app mobile friendly?<br><strong>A:</strong> Yes — use it on your phone browser.</li>
+      </ul>
+    </div>
+  </div>
+`;
         greet.textContent = 'Welcome — please sign in';
         rolePill.textContent = 'Not signed in';
         signedStudent.textContent = '—';
@@ -768,42 +590,93 @@ let sliderImages = [
       if(view === 'cook') return renderCookView();
     }
 
-    // Home view + slider
-    function renderSliderHTML() {
-      if (sliderImages.length === 0) {
-        return `<div class="slider-container"><div class="slide" style="background: rgba(255,255,255,0.05); display:flex;align-items:center;justify-content:center;"><div class="slide-content"><h3>No images yet</h3><p>Upload images using the logo uploader in sidebar</p></div></div></div>`;
-      }
-      let slides = '', dots = '';
-      sliderImages.forEach((img, idx) => {
-        slides += `<div class="slide" style="background-image:url(${img.url})"><div class="slide-content"><h3>${img.title||'MealsSense'}</h3><p>${img.description||'Delicious meals served daily'}</p></div></div>`;
-        dots += `<div class="slider-dot ${idx===currentSlide?'active':''}" data-index="${idx}"></div>`;
-      });
-      return `<div class="slider-container"><div class="slider" style="transform:translateX(-${currentSlide*100}%)">${slides}</div><button class="slider-arrow prev">❮</button><button class="slider-arrow next">❯</button><div class="slider-nav">${dots}</div></div>`;
+    // Home view + slider (REPLACED — uses home-grid, only slider + FAQ card)
+   function renderSliderHTML() {
+  if (!sliderImages || sliderImages.length === 0) {
+    return `<div class="slider-container"><div class="slide" style="background: rgba(255,255,255,0.05); display:flex;align-items:center;justify-content:center;"><div class="slide-content"><h3>No images yet</h3><p>Upload images using the logo uploader in sidebar</p></div></div></div>`;
+  }
+  let slides = '', dots = '';
+  sliderImages.forEach((img, idx) => {
+    // ensure URL is a string and escape single quotes for inline CSS
+    const url = String(img.url || '').replace(/'/g, "\\'");
+    slides += `<div class="slide" style="background-image: url('${url}');"><div class="slide-content"><h3>${(img.title||'MealsSense')}</h3><p>${(img.description||'Delicious meals served daily')}</p></div></div>`;
+    dots += `<div class="slider-dot ${idx===currentSlide?'active':''}" data-index="${idx}"></div>`;
+  });
+  return `<div class="slider-container"><div class="slider" style="transform:translateX(-${currentSlide*100}%)">${slides}</div><button class="slider-arrow prev">❮</button><button class="slider-arrow next">❯</button><div class="slider-nav">${dots}</div></div>`;
+}
+
+
+    // render slider into leftCard (inject HTML then wire controls + preload)
+// ===== Render Home view (creates slider inside viewArea) =====
+function renderHomeView(){
+  viewArea.innerHTML = '';
+
+  const wrapper = el('div');
+  wrapper.className = 'home-grid';
+
+  // LEFT card (slider)
+  const leftCard = el('div');
+  leftCard.className = 'card';
+  const heading = el('h3'); heading.textContent = 'Welcome to MealsSense'; heading.style.margin = '0 0 16px';
+  leftCard.appendChild(heading);
+
+  const sliderHTML = renderSliderHTML();
+  const sliderWrap = el('div');
+  sliderWrap.innerHTML = sliderHTML;
+  leftCard.appendChild(sliderWrap);
+
+  // RIGHT card (FAQ)
+  const rightCard = el('div'); rightCard.className = 'card';
+  rightCard.innerHTML = `<h4 style="margin:0 0 8px">Student FAQ</h4>
+    <ul style="padding-left:18px; line-height:1.6; color:var(--muted); margin:0">
+      <li><strong>Q:</strong> Can I change my choice after submitting?<br><strong>A:</strong> Yes — until the cutoff time.</li>
+      <li style="margin-top:8px"><strong>Q:</strong> Who sees my selection?<br><strong>A:</strong> Only aggregated counts are visible to the cook.</li>
+      <li style="margin-top:8px"><strong>Q:</strong> Is the app mobile friendly?<br><strong>A:</strong> Yes — use it on your phone browser.</li>
+    </ul>`;
+
+  wrapper.appendChild(leftCard);
+  wrapper.appendChild(rightCard);
+  viewArea.appendChild(wrapper);
+
+  // preload slider images and warn on failures
+  (function preloadSliderImages(images){
+    images.forEach((it, i) => {
+      try {
+        const img = new Image();
+        img.onload = () => {};
+        img.onerror = () => {
+          console.warn('Slider image failed to load:', it.url);
+          showToast(`Slider image ${i+1} failed to load (check path).`, 2500);
+        };
+        img.src = it.url;
+      } catch(e) { console.warn('Preload error', e); }
+    });
+  })(sliderImages);
+
+  // wire slider controls scoped to this sliderWrap
+  const container = sliderWrap.querySelector('.slider-container');
+  function updateSlider(){
+    const slider = sliderWrap.querySelector('.slider');
+    if(slider) slider.style.transform = `translateX(-${currentSlide*100}%)`;
+    sliderWrap.querySelectorAll('.slider-dot').forEach((d,i)=>d.classList.toggle('active', i===currentSlide));
+  }
+  if(container){
+    container.querySelector('.prev')?.addEventListener('click', ()=>{ currentSlide = currentSlide>0?currentSlide-1:sliderImages.length-1; updateSlider(); });
+    container.querySelector('.next')?.addEventListener('click', ()=>{ currentSlide = currentSlide<sliderImages.length-1?currentSlide+1:0; updateSlider(); });
+    container.querySelectorAll('.slider-dot').forEach(dot => dot.addEventListener('click', ()=>{ currentSlide = parseInt(dot.dataset.index); updateSlider(); }));
+    if(sliderImages.length>1){
+      clearInterval(window.__sliderInterval);
+      window.__sliderInterval = setInterval(()=>{ currentSlide = currentSlide<sliderImages.length-1?currentSlide+1:0; updateSlider(); }, 5000);
     }
+    updateSlider();
+  } else {
+    console.warn('renderHomeView: slider-container not found');
+  }
+}
 
-    function renderHomeView(){
-      viewArea.innerHTML = ''; const card = el('div'); card.className='card';
-      const heading = el('h3'); heading.textContent = 'Welcome to MealsSense'; heading.style.margin='0 0 16px'; card.appendChild(heading);
-      card.innerHTML += renderSliderHTML();
-      const welcomeContent = el('div');
-      welcomeContent.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;"><div><h4 style="margin:0 0 8px">Today's Special</h4><p class="muted small">Check the Food Table for today's menu and make your selections in My Meals.</p></div><div><h4 style="margin:0 0 8px">Quick Actions</h4><div style="display:flex;flex-direction:column;gap:8px"><button class="ghost" onclick="showView('student')">Plan My Meals</button><button class="ghost" onclick="showView('foodtable')">View Food Table</button><button class="ghost" onclick="showView('notifications')">Check Notifications</button></div></div></div>`;
-      card.appendChild(welcomeContent); viewArea.appendChild(card);
 
-      // wire slider controls after render
-      const container = document.querySelector('.slider-container');
-      if(container){
-        container.querySelector('.prev')?.addEventListener('click',()=>{ currentSlide = currentSlide>0?currentSlide-1:sliderImages.length-1; updateSlider(); });
-        container.querySelector('.next')?.addEventListener('click',()=>{ currentSlide = currentSlide<sliderImages.length-1?currentSlide+1:0; updateSlider(); });
-        container.querySelectorAll('.slider-dot').forEach(dot => dot.addEventListener('click', ()=>{ currentSlide = parseInt(dot.dataset.index); updateSlider(); }));
-        if(sliderImages.length>1){
-          clearInterval(window.__sliderInterval);
-          window.__sliderInterval = setInterval(()=>{ currentSlide = currentSlide<sliderImages.length-1?currentSlide+1:0; updateSlider(); }, 5000);
-        }
-      }
-      function updateSlider(){ const slider = document.querySelector('.slider'); if(slider) slider.style.transform = `translateX(-${currentSlide*100}%)`; document.querySelectorAll('.slider-dot').forEach((d,i)=>d.classList.toggle('active', i===currentSlide)); }
-    }
 
-    // Student view
+    // Student, History, Notifications, FoodTable, Cook functions (unchanged except small wiring)
     async function renderStudentView(){
       viewArea.innerHTML = ''; const card = el('div'); card.className='card';
       const heading = el('h3'); heading.textContent = 'My Meals'; heading.style.margin='0 0 8px'; card.appendChild(heading);
@@ -838,6 +711,7 @@ let sliderImages = [
       viewArea.appendChild(card);
       await loadConfirmationForDate(formatDate(selectedDate));
       $('#refreshBtn').addEventListener('click', ()=> loadConfirmationForDate(formatDate(selectedDate)));
+
       $('#submitBtn').addEventListener('click', async ()=>{ try{ await saveConfirmation(formatDate(selectedDate), selectionState); showToast('Your food has been scheduled according to your record successfully.'); }catch(err){ showToast('Error saving: '+err.message); } });
 
       async function loadConfirmationForDate(dateStr){
@@ -849,13 +723,11 @@ let sliderImages = [
       }
       async function saveConfirmation(dateStr, mealsObj){
         if(!currentUser) { alert('Please login'); return; }
-        // Cutoff enforcement could be added server-side; client-side optional check omitted here to keep file focused on add-new fix.
         const docId = `${currentUser.uid}_${dateStr}`; const docRef = doc(db,'confirmations',docId);
         await setDoc(docRef, { uid: currentUser.uid, studentId: currentProfile?.studentId||'', name: currentProfile?.name||'', date: dateStr, meals: { breakfast: !!mealsObj.breakfast, lunch: !!mealsObj.lunch, dinner: !!mealsObj.dinner }, updatedAt: serverTimestamp() }, { merge: true });
       }
     }
 
-    // History
     async function renderHistoryView(){
       viewArea.innerHTML=''; const card = el('div'); card.className='card'; const h = el('h3'); h.textContent='My History'; h.style.margin='0 0 8px'; card.appendChild(h);
       if(!currentUser){ card.appendChild(el('div')).textContent = 'Please login'; viewArea.appendChild(card); return; }
@@ -867,7 +739,6 @@ let sliderImages = [
       table.appendChild(tbody); card.appendChild(table); viewArea.appendChild(card);
     }
 
-    // Notifications
     async function renderNotificationsView(){
       viewArea.innerHTML=''; const card=el('div'); card.className='card'; const heading=el('h3'); heading.textContent='Notifications'; heading.style.margin='0 0 16px'; card.appendChild(heading);
       if(currentProfile?.role==='cook' || currentProfile?.role==='admin'){
@@ -895,7 +766,6 @@ let sliderImages = [
       container.innerHTML = html;
     }
 
-    // Food Table
     async function renderFoodTableView(){
       viewArea.innerHTML=''; const card=el('div'); card.className='card'; const heading=el('h3'); heading.textContent='Food Table'; heading.style.margin='0 0 16px'; card.appendChild(heading);
       if(currentProfile?.role==='cook' || currentProfile?.role==='admin'){ const editControls = el('div'); editControls.style.marginBottom='16px'; editControls.innerHTML = `<div style="display:flex;gap:8px;align-items:center"><button id="addFoodItem" class="cta">Add Day</button><div class="muted small">Click on meals to edit</div></div>`; card.appendChild(editControls); }
@@ -934,7 +804,6 @@ let sliderImages = [
       try{ await deleteDoc(doc(db,'foodtable',id)); await loadFoodTable(); showToast('Food item deleted'); } catch(err){ showToast('Error deleting food item: '+err.message); }
     }
 
-    // Cook Dashboard (realtime via onSnapshot)
     async function renderCookView(){
       if(!currentProfile || (currentProfile.role !== 'cook' && currentProfile.role !== 'admin')) { viewArea.innerHTML = `<div class="card"><div class="alert">Access denied: your account is not marked as a cook. Ask an admin to set role: "cook".</div></div>`; return; }
       if(cookUnsubscribe){ cookUnsubscribe(); cookUnsubscribe = null; }
@@ -969,7 +838,6 @@ let sliderImages = [
       }
     }
 
-    // CSV Export
     async function exportCSV(all=false){
       if(!currentUser){ alert('Login to export'); return; }
       if(all && currentProfile?.role !== 'cook' && currentProfile?.role !== 'admin'){ alert('Only cook can export all confirmations'); return; }
@@ -980,20 +848,58 @@ let sliderImages = [
       const blob=new Blob([csv.join('\n')], {type:'text/csv;charset=utf-8;'}); const filename = all ? `confirmations_all_${(new Date()).toISOString().slice(0,10)}.csv` : `confirmations_${currentProfile?.studentId || currentUser.uid}.csv`; const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); URL.revokeObjectURL(url); a.remove();
     }
 
-    // Notifications listener cleanup on unload
     window.addEventListener('beforeunload', ()=>{ if(notificationsUnsubscribe) notificationsUnsubscribe(); if(cookUnsubscribe) cookUnsubscribe(); if(foodScheduleUnsubscribe) foodScheduleUnsubscribe(); });
 
-    // Delegated click listener (robust binding for Add/Edit/Delete)
     document.addEventListener('click', (ev) => {
       const t = ev.target;
       if(!t) return;
-
       if(t.id === 'addFoodItem'){ ev.preventDefault(); addFoodItem(); }
       if(t.classList.contains('edit-btn')){ ev.preventDefault(); const id = t.dataset.id; if(id) editFoodItem(id); }
       if(t.classList.contains('del-btn')){ ev.preventDefault(); const id = t.dataset.id; if(id) deleteFoodItem(id); }
     });
 
-    // Make functions global for inline usage if needed
+    // Robust delegated handler for Submit (safe after re-renders)
+    document.addEventListener('click', async (ev) => {
+      const t = ev.target;
+      if(!t) return;
+      if (t.id === 'submitBtn') {
+        ev.preventDefault();
+        const selDateEl = document.querySelector('.day-card.selected');
+        if (!selDateEl) { showToast('Select a date first'); return; }
+        const dateStr = selDateEl.dataset.date || selDateEl.querySelector('.date-small')?.textContent || null;
+        if (!dateStr) { showToast('Unable to determine selected date'); return; }
+        const mealEls = document.querySelectorAll('.meal-toggle');
+        const meals = { breakfast:false, lunch:false, dinner:false };
+        mealEls.forEach(elm => {
+          const label = elm.querySelector('div')?.textContent?.trim().toLowerCase() || '';
+          const on = elm.classList.contains('on');
+          if (label.includes('breakfast')) meals.breakfast = on;
+          if (label.includes('lunch')) meals.lunch = on;
+          if (label.includes('dinner')) meals.dinner = on;
+        });
+        if (!currentUser) { showToast('Please login'); return; }
+        try {
+          t.disabled = true; t.textContent = 'Saving...';
+          const docId = `${currentUser.uid}_${dateStr}`;
+          const docRef = doc(db,'confirmations',docId);
+          await setDoc(docRef, {
+            uid: currentUser.uid,
+            studentId: currentProfile?.studentId||'',
+            name: currentProfile?.name||'',
+            date: dateStr,
+            meals: { breakfast: !!meals.breakfast, lunch: !!meals.lunch, dinner: !!meals.dinner },
+            updatedAt: serverTimestamp()
+          }, { merge: true });
+          showToast('Saved successfully');
+        } catch(err) {
+          console.error('Save error', err);
+          showToast('Error saving: ' + (err.message || 'unknown'));
+        } finally {
+          t.disabled = false; t.textContent = 'Submit selection';
+        }
+      }
+    });
+
     window.showView = showView;
     window.editFoodItem = editFoodItem;
     window.deleteFoodItem = deleteFoodItem;
